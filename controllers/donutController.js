@@ -1,28 +1,44 @@
 const Donut = require("../models/Donut");
 
-// GET all donuts
 const getAllDonuts = async (req, res) => {
-  try {
-    const donuts = await Donut.find();
-    res.json(donuts);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+    try {
+        const donuts = await Donut.find();
+        res.status(200).json(donuts);
+    } catch (error) {
+        res.status(404).json({
+            message: error.message
+        });
+    }
 };
 
-// POST one donut to mongoDB
-const createDonut = (req, res) => {
-  console.log(req.body);
-  Donut.create(req.body, (err, donut) => {
-    if (err) {
-      res.status(500).json({ message: err.message });
-    } else {
-      res.status(201).json(donut);
+const createDonut = async (req, res) => {
+    donut = new Donut([
+        req.body.dough,
+        req.body.glaze,
+        req.body.sprinkles,
+        req.body.company
+    ]);
+    donut.save(function (err, donut) {
+        if (err) {
+            res.status
+        }
+        res.status(201).send(donut);
+    });
+};
+
+const deleteDonut = async (req, res) => {
+    try {
+        const donut = await Donut.findByIdAndDelete(req.params.id);
+        res.status(200).json(donut);
+    } catch (error) {   
+        res.status(404).json({
+            message: error.message
+        });
     }
-  });
 };
 
 module.exports = {
-  getAllDonuts,
-  createDonut,
+    getAllDonuts,
+    createDonut,
+    deleteDonut
 };
