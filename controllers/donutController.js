@@ -11,6 +11,17 @@ const getAllDonuts = async (req, res) => {
   }
 };
 
+const getDonutById = async (req, res) => {
+  try {
+    const donut = await Donut.findById(req.params.id);
+    res.status(200).json(donut);
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
 const createDonut = async (req, res) => {
   donut = new Donut([
     req.body.dough,
@@ -55,4 +66,5 @@ module.exports = {
   createDonut,
   deleteDonut,
   updateDonut,
+  getDonutById,
 };
