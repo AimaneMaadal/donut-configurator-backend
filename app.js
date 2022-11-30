@@ -6,6 +6,18 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const mongoose = require('mongoose');
+
+
+
+main().catch(err => console.log(err));
+
+async function main() {
+  const uri = 'mongodb+srv://donutello:xfXDxSLE3cWD20Y4@cluster0.u43lcgy.mongodb.net/?retryWrites=true&w=majority';
+  await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  console.log("Connected to MongoDB");
+}
+
 
 var app = express();
 
