@@ -26,7 +26,7 @@ const createDonut = async (req, res) => {
   donut = new Donut([
     req.body.dough,
     req.body.glaze,
-    req.body.sprinkles,
+    req.body.topping,
     req.body.company,
   ]);
   donut.save(function (err, donut) {
