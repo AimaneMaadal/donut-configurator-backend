@@ -23,18 +23,14 @@ const getDonutById = async (req, res) => {
 };
 
 const createDonut = async (req, res) => {
-  donut = new Donut([
-    req.body.dough,
-    req.body.glaze,
-    req.body.topping,
-    req.body.company,
-  ]);
-  donut.save(function (err, donut) {
-    if (err) {
-      res.status;
-    }
-    res.status(201).send(donut);
-  });
+  try {
+    const donut = await Donut.create(req.body);
+    res.status(201).json(donut);
+  } catch (error) {
+    res.status(409).json({
+      message: error.message,
+    });
+  }
 };
 
 const deleteDonut = async (req, res) => {
