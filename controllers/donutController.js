@@ -1,7 +1,14 @@
 const Donut = require("../models/Donut");
 
 const getAllDonuts = async (req, res, next) => {
-  console.log("getAllDonuts");
+  try {
+    const donuts = await Donut.find();
+    res.status(200).json(donuts);
+  } catch (error) {
+    res.status(404).json({
+      message: error.message,
+    });
+  }
 };
 
 const getDonutById = async (req, res) => {
