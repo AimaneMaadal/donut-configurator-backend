@@ -3,15 +3,15 @@ const Schema = mongoose.Schema;
 
 const donutSchema = new Schema({
   dough: {
-    type: Number,
+    type: String,
     required: true,
   },
   glaze: {
-    type: Number,
+    type: String,
     required: true,
   },
   topping: {
-    type: Number,
+    type: String,
     required: true,
   },
   company: {
