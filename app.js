@@ -12,7 +12,7 @@ main().catch((err) => console.log(err));
 
 async function main() {
   const uri =
-    "mongodb+srv://aimane:9PnitAocQbT5ySRO@cluster0.vjwy5hu.mongodb.net/?retryWrites=true&w=majority";
+    "mongodb+srv://alejandrodewolf:DgjJWmbRkfwYwYNy@donutello.kiewpvq.mongodb.net/?retryWrites=true&w=majority";
   await mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
