@@ -10,7 +10,7 @@ const donutSchema = new Schema({
     type: Number,
     required: true,
   },
-  sprinkles: {
+  topping: {
     type: Number,
     required: true,
   },
