@@ -18,6 +18,18 @@ const donutSchema = new Schema({
     type: String,
     required: true,
   },
+  companytag: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: String,
+    required: true,
+  },
+  remarks: {
+    type: String,
+    required: false,
+  },
 });
 
 const Donut = mongoose.model("donuts", donutSchema);
