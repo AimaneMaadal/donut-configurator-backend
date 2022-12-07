@@ -3,10 +3,12 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var bodyParser = require("body-parser");
 var cors = require("cors");
 
 var indexRouter = require("./routes/index");
 var donutsRouter = require("./routes/donuts");
+var usersRouter = require("./routes/users");
 const mongoose = require("mongoose");
 
 main().catch((err) => console.log(err));
@@ -33,9 +35,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use("/", indexRouter);
 app.use("/donuts", donutsRouter);
+app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
