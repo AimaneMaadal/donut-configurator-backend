@@ -56,41 +56,46 @@ const login = (req, res, next) => {
     .exec()
     .then((user) => {
       if (user.length < 1) {
-        //user doesnt exist
         return res.json({
           status: "error",
-          message: "Deze gebruiker bestaat niet, registreer een account.",
+          message: "Deze gebruiker bestaat niet. Maak een account aan.",
         });
       }
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (err) {
           return res.json({
             status: "error",
-            message: "Wachtwoord is incorrect, probeer opnieuw.",
+            message: "Er ging iets mis, probeer opnieuw.",
           });
         }
         if (result) {
           const token = jwt.sign(
             {
-              userId: user[0]._id,
               username: user[0].username,
+              userId: user[0]._id,
             },
-            config.passwordToken,
+            config.secret,
             {
-              expiresIn: "24h",
+              expiresIn: "1h",
             }
           );
           return res.json({
             status: "success",
             message: "Auth successful",
             token: token,
-            username: user[0].username,
           });
         }
         res.json({
           status: "error",
-          message: "Wachtwoord is incorrect, probeer opnieuw.",
+          message: "Auth failed",
         });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json({
+        status: "error",
+        message: "Er ging iets mis, probeer opnieuw.",
       });
     });
 };
