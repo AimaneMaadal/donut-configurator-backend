@@ -30,6 +30,10 @@ const donutSchema = new Schema({
     type: String,
     required: false,
   },
+  snapshot: {
+    type: String,
+    required: true,
+  },
 });
 
 const Donut = mongoose.model("donuts", donutSchema);
