@@ -74,7 +74,7 @@ const login = (req, res, next) => {
               username: user[0].username,
               userId: user[0]._id,
             },
-            config.secret,
+            config.passwordToken,
             {
               expiresIn: "1h",
             }
