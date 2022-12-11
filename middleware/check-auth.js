@@ -7,7 +7,7 @@ const checkAuth = (req, res, next) => {
   if (!token) {
     return res.json({
       status: "error",
-      message: "Authorization failed",
+      message: "Authorization failed, no token found",
     });
   }
   try {
@@ -17,7 +17,7 @@ const checkAuth = (req, res, next) => {
   } catch (err) {
     return res.json({
       status: "error",
-      message: "Authorization failed",
+      message: "Authorization failed, wrong token",
     });
   }
 };
