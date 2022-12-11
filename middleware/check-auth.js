@@ -2,22 +2,15 @@ const jwt = require("jsonwebtoken");
 let config = require("../config/config");
 
 const checkAuth = (req, res, next) => {
-  const token = req.headers.authorization;
-  console.log(token);
-  if (!token) {
-    return res.json({
-      status: "error",
-      message: "Authorization failed, no token found",
-    });
-  }
   try {
+    const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, config.passwordToken);
     req.userData = decoded;
     next();
-  } catch (err) {
+  } catch (error) {
     return res.json({
       status: "error",
-      message: "Authorization failed, wrong token",
+      message: "Auth failed",
     });
   }
 };
