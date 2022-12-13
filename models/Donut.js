@@ -38,6 +38,10 @@ const donutSchema = new Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Donut = mongoose.model("donuts", donutSchema);
