@@ -38,9 +38,10 @@ const donutSchema = new Schema({
     type: String,
     required: true,
   },
+  // status as string and give default value of in progress
   status: {
     type: String,
-    required: true,
+    default: "nieuw",
   },
 });
 
