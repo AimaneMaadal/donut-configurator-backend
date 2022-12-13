@@ -46,6 +46,10 @@ const donutSchema = new Schema({
     type: Number,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
 });
 
 const Donut = mongoose.model("donuts", donutSchema);
