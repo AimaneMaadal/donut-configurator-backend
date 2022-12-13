@@ -100,5 +100,8 @@ const login = (req, res, next) => {
     });
 };
 
+const updatePassword = (req, res, next) => {};
+
 module.exports.signup = signup;
 module.exports.login = login;
+module.exports.updatePassword = updatePassword;
