@@ -4,7 +4,9 @@ const bcrypt = require("bcrypt");
 let config = require("../config/config");
 
 const signup = (req, res, next) => {
-  User.find({ username: req.body.username })
+  User.find({
+      username: req.body.username
+    })
     .exec()
     .then((user) => {
       if (user.length >= 1) {
@@ -52,7 +54,9 @@ const signup = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-  User.find({ username: req.body.username })
+  User.find({
+      username: req.body.username
+    })
     .exec()
     .then((user) => {
       if (user.length < 1) {
@@ -69,13 +73,11 @@ const login = (req, res, next) => {
           });
         }
         if (result) {
-          const token = jwt.sign(
-            {
+          const token = jwt.sign({
               username: user[0].username,
               userId: user[0]._id,
             },
-            config.passwordToken,
-            {
+            config.passwordToken, {
               expiresIn: "1h",
             }
           );
@@ -100,7 +102,57 @@ const login = (req, res, next) => {
     });
 };
 
-const updatePassword = (req, res, next) => {};
+const updatePassword = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      bcrypt.compare(req.body.oldPassword, user.password, (err, result) => {
+        if (err) {
+          return res.json({
+            status: "error",
+            message: "Er ging iets mis, probeer opnieuw.",
+          });
+        }
+        if (result) {
+          bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
+            if (err) {
+              console.log(err);
+              return res.json({
+                status: "error",
+                message: "Er ging iets mis, probeer opnieuw.",
+              });
+            } else {
+              user.password = hash;
+              user.save();
+              res.json({
+                status: "success",
+                message: "Wachtwoord is gewijzigd.",
+              });
+            }
+          });
+        } else {
+          res.json({
+            status: "error",
+            message: "Auth failed",
+          });
+        }
+      });
+    } else {
+      res.json({
+        status: "error",
+        message: "Gebruiker niet gevonden.",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      status: "error",
+      message: "Er ging iets mis, probeer opnieuw.",
+    });
+  }
+};
+
+
 
 module.exports.signup = signup;
 module.exports.login = login;
