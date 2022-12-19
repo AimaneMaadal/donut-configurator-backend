@@ -104,54 +104,29 @@ const login = (req, res, next) => {
 
 const updatePassword = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (user) {
-      bcrypt.compare(req.body.oldPassword, user.password, (err, result) => {
-        if (err) {
-          return res.json({
-            status: "error",
-            message: "Er ging iets mis, probeer opnieuw.",
-          });
-        }
-        if (result) {
-          bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
-            if (err) {
-              console.log(err);
-              return res.json({
-                status: "error",
-                message: "Er ging iets mis, probeer opnieuw.",
-              });
-            } else {
-              user.password = hash;
-              user.save();
-              res.json({
-                status: "success",
-                message: "Wachtwoord is gewijzigd.",
-              });
-            }
-          });
-        } else {
-          res.json({
-            status: "error",
-            message: "Auth failed",
-          });
-        }
-      });
-    } else {
-      res.json({
+    const user = await User.findById(req.body.id);
+    const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
+    if (!isMatch) {
+      return res.json({
         status: "error",
-        message: "Gebruiker niet gevonden.",
+        message: "Oude wachtwoord is niet correct.",
       });
     }
-  } catch (error) {
-    console.log(error);
+    const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    res.json({
+      status: "success",
+      message: "Wachtwoord is succesvol gewijzigd.",
+    });
+  } catch (err) {
+    console.log(err);
     res.json({
       status: "error",
       message: "Er ging iets mis, probeer opnieuw.",
     });
   }
 };
-
 
 
 module.exports.signup = signup;
