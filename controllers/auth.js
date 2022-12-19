@@ -103,29 +103,57 @@ const login = (req, res, next) => {
 };
 
 const updatePassword = async (req, res) => {
-  try {
-    const user = await User.findById(req.body.id);
-    const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
-    if (!isMatch) {
+  const decoded = jwt.verify(req.body.token, config.passwordToken);
+  const userId = decoded.userId;
+
+  const user = await User.findById(userId);
+  //if password is correct reset password
+  bcrypt.compare(req.body.oldPassword, user.password, (err, result) => {
+    if (err) {
       return res.json({
         status: "error",
-        message: "Oude wachtwoord is niet correct.",
+        message: "Er ging iets mis, probeer opnieuw.",
       });
     }
-    const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-    res.json({
-      status: "success",
-      message: "Wachtwoord is succesvol gewijzigd.",
-    });
-  } catch (err) {
-    console.log(err);
-    res.json({
-      status: "error",
-      message: "Er ging iets mis, probeer opnieuw.",
-    });
-  }
+    if (result) {
+      bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
+        if (err) {
+          console.log(err);
+          return res.json({
+            status: "error",
+            message: "Er ging iets mis, probeer opnieuw.",
+          });
+        } else {
+          user.password = hash;
+          user
+            .save()
+            .then((result) => {
+              console.log(result);
+              res.json({
+                status: "success",
+                data: {
+                  username: result.username,
+                  password: result.password,
+                },
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+              res.json({
+                status: "error",
+                message: "Er ging iets mis, probeer opnieuw.",
+              });
+            }
+          );
+        }
+      });
+    } else {
+      res.json({
+        status: "error",
+        message: "Auth failed",
+      });
+    }
+  });
 };
 
 
