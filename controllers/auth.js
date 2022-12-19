@@ -37,6 +37,7 @@ const signup = (req, res, next) => {
                   data: {
                     username: result.username,
                     password: result.password,
+                    id: result._id,
                   },
                 });
               })
@@ -102,72 +103,7 @@ const login = (req, res, next) => {
     });
 };
 
-//update password with saved jwt token
-const updatePassword = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  const decoded = jwt.verify(token, config.passwordToken);
-  const userId = decoded.userId;
-  User.findById(userId)
-    .exec()
-    .then((user) => {
-      if (user.length < 1) {
-        return res.json({
-          status: "error",
-          message: "Deze gebruiker bestaat niet. Maak een account aan.",
-        });
-      }
-      bcrypt.compare(req.body.oldPassword, user.password, (err, result) => {
-        if (err) {
-          return res.json({
-            status: "error",
-            message: "Er ging iets mis, probeer opnieuw.",
-          });
-        }
-        if (result) {
-          bcrypt.hash(req.body.newPassword, 10, (err, hash) => {  
-            if (err) {
-              console.log(err);
-              return res.json({
-                status: "error",
-                message: "Er ging iets mis, probeer opnieuw.",
-              });
-            } else {
-              user.password = hash;
-              user.save()
-                .then((result) => {
-                  console.log(result);
-                  res.json({
-                    status: "success",
-                    data: {
-                      username: result.username,
-                      password: result.password,
-                    },
-                  });
-                })
-                .catch((err) => {
-                  console.log(err);
-                  res.json({
-                    status: "error",
-                    message: "Er ging iets mis, probeer opnieuw.",
-                  });
-                });
-            }
-          });
-        }
-        res.json({
-          status: "error",
-          message: "Auth failed",
-        });
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json({
-        status: "error",
-        message: "Er ging iets mis, probeer opnieuw.",
-      });
-    });
-};
+//update password of users with id 
 
 
 
