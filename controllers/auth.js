@@ -102,10 +102,20 @@ const login = (req, res, next) => {
     });
 };
 
-const updatePassword = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (user) {
+//update password with saved jwt token
+const updatePassword = (req, res, next) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const decoded = jwt.verify(token, config.passwordToken);
+  const userId = decoded.userId;
+  User.findById(userId)
+    .exec()
+    .then((user) => {
+      if (user.length < 1) {
+        return res.json({
+          status: "error",
+          message: "Deze gebruiker bestaat niet. Maak een account aan.",
+        });
+      }
       bcrypt.compare(req.body.oldPassword, user.password, (err, result) => {
         if (err) {
           return res.json({
@@ -114,7 +124,7 @@ const updatePassword = async (req, res) => {
           });
         }
         if (result) {
-          bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
+          bcrypt.hash(req.body.newPassword, 10, (err, hash) => {  
             if (err) {
               console.log(err);
               return res.json({
@@ -123,33 +133,40 @@ const updatePassword = async (req, res) => {
               });
             } else {
               user.password = hash;
-              user.save();
-              res.json({
-                status: "success",
-                message: "Wachtwoord is gewijzigd.",
-              });
+              user.save()
+                .then((result) => {
+                  console.log(result);
+                  res.json({
+                    status: "success",
+                    data: {
+                      username: result.username,
+                      password: result.password,
+                    },
+                  });
+                })
+                .catch((err) => {
+                  console.log(err);
+                  res.json({
+                    status: "error",
+                    message: "Er ging iets mis, probeer opnieuw.",
+                  });
+                });
             }
           });
-        } else {
-          res.json({
-            status: "error",
-            message: "Auth failed",
-          });
         }
+        res.json({
+          status: "error",
+          message: "Auth failed",
+        });
       });
-    } else {
+    })
+    .catch((err) => {
+      console.log(err);
       res.json({
         status: "error",
-        message: "Gebruiker niet gevonden.",
+        message: "Er ging iets mis, probeer opnieuw.",
       });
-    }
-  } catch (error) {
-    console.log(error);
-    res.json({
-      status: "error",
-      message: "Er ging iets mis, probeer opnieuw.",
     });
-  }
 };
 
 
