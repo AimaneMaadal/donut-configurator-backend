@@ -20,11 +20,11 @@ const donutSchema = new Schema({
   },
   brandtag: {
     type: String,
-    required: true,
+    required: false,
   },
   brandtagtype: {
     type: String,
-    required: true,
+    required: false,
   },
   date: {
     type: String,
